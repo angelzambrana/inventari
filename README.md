@@ -14,6 +14,7 @@ With scanner barcode put in the table you can add a new article.
 
 # More information
 In this link to see more infomation.
+
 https://www.evernote.com/pub/angelzambranafernandez/inventario
 Is in spanish. 
 Sort by number to view correctly.
