@@ -8,7 +8,7 @@ A wireless wifi.
 
 # How work?
 This software work in php and you can use to make a inventory with a tablets. 
-We put one laptop witha server and we have 5 tablets (no limits) tomake the inventory. 
+We put one laptop witha server and we have 5 tablets (no limits) to make the inventory. 
 With scanner barcode put in the table you can add a new article.
 
 
