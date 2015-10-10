@@ -10,7 +10,7 @@
 <!-- css style ivory  http://weice.in/ivory/ -->
 <link href="css/ivory.css" rel="stylesheet">
 
-<title>INVENTARIO</title>
+<title>INVENTARI</title>
 
 <script type="text/javascript">
 		function clean(elem){
@@ -19,47 +19,35 @@
  	</script>
 </head>
 
-<body >
+<body onload="clean barcode">
 
 	<?php 
-	//save the value GET
-	$sec = $_GET['sec'];
-	$area = $_GET['area'];
-
 	?>
 	<div class="c10 centered first">
-		<div class="alert info">
+		<div class="alert error">
 			<p style="font-size: 300%; text-align: center;">
 				<a href="index.php">INVENTARIO</a>
-			</p>
+				</p>
 		</div>
 		<!-- div alert info -->
 
-		<h4 class="text-center">C&Oacute;DIGO</h4>
-		<form method="post" action="insert2.php">
+		  <form method="post" action="new2.php">
+			<p style="font-size: 100%; text-align: center;">PRECIO (PUNTO NO COMA)</p>
 			<input autofocus
-				style="font-size: 300%; text-align: center; margin-left: auto; margin-right: auto; display: block; width: 500px; height: 100px;"
-				type="number" name="barcode" id="barcode" placeholder="" onload="clean(barcode);">
-			<p style="font-size: 100%; text-align: center;">
-			
-			
-			<p style="font-size: 100%; text-align: center;">SECCION</p>
-			<p style="font-size: 100%; text-align: center;">
-				<select style="font-size: 120%; text-align: center;" name='sec'
-					id='sec'>
-					<option value="1"
-					<?php if ($sec=="1"){ echo 'selected="selected"';}?>>WOMAN</option>
-					<option value="2"
-					<?php if ($sec=="2"){ echo 'selected="selected"';}?>>MAN</option>
-					<option value="3"
-					<?php if ($sec=="3"){ echo 'selected="selected"';}?>>BOYS</option>
-				</select>
-			</p>
-			<p style="font-size: 100%; text-align: center;">ZONA</p>
-			<input
-				style="font-size: 200%; text-align: center; margin-left: auto; margin-right: auto; display: block; width: 100px; height: 50px;"
-				type="number" name="area" id="area" value="<?php echo $area;?>"
+				style="font-size: 200%; text-align: center; margin-left: auto; margin-right: auto; display: block; width: 200px; height: 50px;"
+				type="text" name="price" id="price" value=""
 				placeholder="">
+	      <p style="font-size: 200%; text-align: center;"></p>
+			<p style="font-size: 100%; text-align: center;">ART&Iacute;CULO</p>
+			<input
+				style="font-size: 150%; text-align: center; margin-left: auto; margin-right: auto; display: block; width: 400px; height: 50px;"
+				type="text" name="article" id="article"	placeholder="">
+			<p style="font-size: 200%; text-align: center;"></p>
+		<h4 class="text-center">C&Oacute;DIGO</h4>
+		  <input
+				style="font-size: 300%; text-align: center; margin-left: auto; margin-right: auto; display: block; width: 500px; height: 100px;"
+				type="number" name="barcode" id="barcode" placeholder="">
+			
 			<p style="font-size: 200%; text-align: center;"></p>
 			<button type="submit" id="confirmar" name="CONFIRMAR"
 				style="margin-left: auto; margin-right: auto; display: block; font-size: 200%; height: 60px;"
@@ -69,7 +57,7 @@
 
 		<button type="button" id="limpiar" name="LIMPIAR"
 			style="margin-left: auto; margin-right: auto; display: block; font-size: 200%; height: 60px;"
-			onclick="clean(barcode);" class="blue">NETEJAR</button>
+			onclick="clean(barcode);clean(article);clean(price);" class="blue">NETEJAR</button>
 	</div>
 	<!-- Div centered -->
 </body>

@@ -10,7 +10,7 @@
 <!-- css style ivory  http://weice.in/ivory/ -->
 <link href="css/ivory.css" rel="stylesheet">
 
-<title>INVENTARI</title>
+<title>INVENTARIO</title>
 
 </head>
 
@@ -24,45 +24,56 @@
 
 	// save value barcode
 	$barcode=$_POST['barcode'];
-	// save sec 1-> WOMAN 2 -> MAN 3-> BOY
-	$sec=$_POST['sec'];
-	//save area
-	$area=$_POST['area'];
+	// save name of article
+	$article=$_POST['article'];
+	//save price of article
+	$price=$_POST['price'];
 
-
-	//date now
-	$datat = getdate();
-	//date complet
-	$datahour = returndaycomplet($datat);
 
 	//Boolean for check
 	$bb = true;
 
-	if ($sec==null){
+	//A value null
+	if ($barcode==null){
+	  $bb=false;
+	}
+	if($price==null){
+	  $bb=false;
+	}
+	if($article==null){
+	  $bb=false;
+	}
+	
+	// negative value
+	if ($price<=0){
+	  $bb=false;
+	}
+	// A numeric value
+	if(!is_numeric($price)){
 	  $bb=false;
 	}
 
-	if ($area<=0){
-	  $bb=false;
+    $largo=substr($barcode, 0,11);
+    
+	//Barcode 11 letters
+	if(strlen($largo)!=11){
+	 $bb=false;
 	}
-	if ($area>150){
-	  $bb=false;
-
-	}
-
+	
 	if ($bb==false){
 	  echo '<script>';
 	  echo 'alert("Revisa les dades");';
 	  echo '</script>';
 	} else {
 
-	  $article = searchBarcode($barcode);
+	  $articles = searchBarcode($barcode);
 
 
-	  if (is_null($article)){
+	  if (!is_null($articles)){
 
 	    echo '<script>';
-	    echo 'alert("Article inexistent");';
+	    echo 'alert("Article existent");';
+	    echo 'history.go(-1)';
 	    echo '</script>';
 	  }else{
 
@@ -74,9 +85,8 @@
 
 		<div class="alert info">
 			<p style="font-size: 300%; text-align: center;">
-				INVENTARI
-				<?php //echo $project;?>
-			</p>
+				INVENTARIO
+				</p>
 		</div>
 		<!-- div alert info -->
 
@@ -89,13 +99,10 @@
 		<!-- div alert success -->
 
 
-		<!-- Send for post method  -->
-		<input type="hidden" name="sec" value="<?php echo $sec;?>"></input> <input
-			type="hidden" name="area" value="<?php echo $area;?>"></input>
 		<?php 	
 
 		//function insert in database
-		insertBarcode($barcode, $sec, $area,$datahour);
+		insertNewBarcode($barcode, $article,$price);
 		echo '<div class="alert success" style="text-align:center;">ARTICLE GUARDAT</div>';
 	  }
 	}
@@ -105,7 +112,7 @@
 		<!--  Retorn pàgina inicial -->
 		<script type="text/javascript">
     function redireccionar(){
-    	  window.location="insert.php?sec=<?php echo  $sec;?>&area=<?php echo $area?>";
+    	  window.location="new.php";
     	  } 
     setTimeout ("redireccionar()", 1000);
     </script>
