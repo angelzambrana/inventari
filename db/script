@@ -1,0 +1,263 @@
+--
+-- PostgreSQL database dump
+--
+
+-- Dumped from database version 9.1.12
+-- Dumped by pg_dump version 9.1.12
+-- Started on 2014-03-14 15:41:50 CET
+
+SET statement_timeout = 0;
+SET client_encoding = 'UTF8';
+SET standard_conforming_strings = on;
+SET check_function_bodies = false;
+SET client_min_messages = warning;
+
+--
+-- TOC entry 168 (class 3079 OID 11722)
+-- Name: plpgsql; Type: EXTENSION; Schema: -; Owner: 
+--
+
+CREATE EXTENSION IF NOT EXISTS plpgsql WITH SCHEMA pg_catalog;
+
+
+--
+-- TOC entry 1966 (class 0 OID 0)
+-- Dependencies: 168
+-- Name: EXTENSION plpgsql; Type: COMMENT; Schema: -; Owner: 
+--
+
+COMMENT ON EXTENSION plpgsql IS 'PL/pgSQL procedural language';
+
+
+SET search_path = public, pg_catalog;
+
+SET default_tablespace = '';
+
+SET default_with_oids = false;
+
+--
+-- TOC entry 161 (class 1259 OID 16428)
+-- Dependencies: 1847 6
+-- Name: inventory; Type: TABLE; Schema: public; Owner: postgres; Tablespace: 
+--
+
+CREATE TABLE inventory (
+    inventory_id integer NOT NULL,
+    barcode character varying(14),
+    sdata timestamp without time zone,
+    quantity integer,
+    area integer,
+    sec integer,
+    finish character(1) DEFAULT 0
+);
+
+
+ALTER TABLE public.inventory OWNER TO postgres;
+
+--
+-- TOC entry 162 (class 1259 OID 16432)
+-- Dependencies: 1849 6
+-- Name: list; Type: TABLE; Schema: public; Owner: postgres; Tablespace: 
+--
+
+CREATE TABLE list (
+    list_id integer NOT NULL,
+    barcode character varying(14),
+    name character varying(200),
+    price integer,
+    new character(1) DEFAULT 0
+);
+
+
+ALTER TABLE public.list OWNER TO postgres;
+
+--
+-- TOC entry 163 (class 1259 OID 16436)
+-- Dependencies: 1956 6
+-- Name: EUROS PIEZAS SEC AREA; Type: VIEW; Schema: public; Owner: postgres
+--
+
+CREATE VIEW "EUROS PIEZAS SEC AREA" AS
+    SELECT i.sec, i.area, count(i.quantity) AS piezas, to_char((round((sum((i.quantity * l.price)))::numeric, 2) / (100)::numeric), '99,999D99'::text) AS total FROM inventory i, list l WHERE ((substr((i.barcode)::text, 1, 11) = (l.barcode)::text) AND (i.finish = '1'::bpchar)) GROUP BY i.sec, i.area ORDER BY i.sec, i.area;
+
+
+ALTER TABLE public."EUROS PIEZAS SEC AREA" OWNER TO postgres;
+
+--
+-- TOC entry 164 (class 1259 OID 16440)
+-- Dependencies: 1957 6
+-- Name: PIEZAS_CANT_EUROS; Type: VIEW; Schema: public; Owner: postgres
+--
+
+CREATE VIEW "PIEZAS_CANT_EUROS" AS
+    SELECT l.barcode, l.name, count(i.quantity) AS piezas, to_char((round((sum((i.quantity * l.price)))::numeric, 2) / (100)::numeric), '99,999D99'::text) AS total FROM inventory i, list l WHERE ((substr((i.barcode)::text, 1, 11) = (l.barcode)::text) AND (i.finish = '1'::bpchar)) GROUP BY l.barcode, l.name ORDER BY l.barcode;
+
+
+ALTER TABLE public."PIEZAS_CANT_EUROS" OWNER TO postgres;
+
+--
+-- TOC entry 165 (class 1259 OID 16444)
+-- Dependencies: 161 6
+-- Name: inventory_inventory_id_seq; Type: SEQUENCE; Schema: public; Owner: postgres
+--
+
+CREATE SEQUENCE inventory_inventory_id_seq
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+ALTER TABLE public.inventory_inventory_id_seq OWNER TO postgres;
+
+--
+-- TOC entry 1969 (class 0 OID 0)
+-- Dependencies: 165
+-- Name: inventory_inventory_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: postgres
+--
+
+ALTER SEQUENCE inventory_inventory_id_seq OWNED BY inventory.inventory_id;
+
+
+--
+-- TOC entry 166 (class 1259 OID 16446)
+-- Dependencies: 162 6
+-- Name: list_list_id_seq; Type: SEQUENCE; Schema: public; Owner: postgres
+--
+
+CREATE SEQUENCE list_list_id_seq
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+ALTER TABLE public.list_list_id_seq OWNER TO postgres;
+
+--
+-- TOC entry 1971 (class 0 OID 0)
+-- Dependencies: 166
+-- Name: list_list_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: postgres
+--
+
+ALTER SEQUENCE list_list_id_seq OWNED BY list.list_id;
+
+
+--
+-- TOC entry 167 (class 1259 OID 16448)
+-- Dependencies: 1958 6
+-- Name: sec_area_piezas_precio_zapatos; Type: VIEW; Schema: public; Owner: postgres
+--
+
+CREATE VIEW sec_area_piezas_precio_zapatos AS
+    SELECT i.sec, i.area, sum(i.quantity) AS piezas, l.price AS precio, CASE WHEN ("substring"((i.barcode)::text, 1, 1) = '1'::text) THEN 'Z'::text ELSE ''::text END AS zapatos FROM inventory i, list l WHERE ((substr((i.barcode)::text, 1, 11) = (l.barcode)::text) AND (i.finish = '1'::bpchar)) GROUP BY i.sec, i.area, l.price, i.barcode ORDER BY i.sec, i.area;
+
+
+ALTER TABLE public.sec_area_piezas_precio_zapatos OWNER TO postgres;
+
+--
+-- TOC entry 1848 (class 2604 OID 16452)
+-- Dependencies: 165 161
+-- Name: inventory_id; Type: DEFAULT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY inventory ALTER COLUMN inventory_id SET DEFAULT nextval('inventory_inventory_id_seq'::regclass);
+
+
+--
+-- TOC entry 1850 (class 2604 OID 16453)
+-- Dependencies: 166 162
+-- Name: list_id; Type: DEFAULT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY list ALTER COLUMN list_id SET DEFAULT nextval('list_list_id_seq'::regclass);
+
+
+--
+-- TOC entry 1852 (class 2606 OID 16455)
+-- Dependencies: 161 161 1960
+-- Name: inventory_id_pk; Type: CONSTRAINT; Schema: public; Owner: postgres; Tablespace: 
+--
+
+ALTER TABLE ONLY inventory
+    ADD CONSTRAINT inventory_id_pk PRIMARY KEY (inventory_id);
+
+
+--
+-- TOC entry 1854 (class 2606 OID 16457)
+-- Dependencies: 162 162 1960
+-- Name: list_id_pk; Type: CONSTRAINT; Schema: public; Owner: postgres; Tablespace: 
+--
+
+ALTER TABLE ONLY list
+    ADD CONSTRAINT list_id_pk PRIMARY KEY (list_id);
+
+
+--
+-- TOC entry 1965 (class 0 OID 0)
+-- Dependencies: 6
+-- Name: public; Type: ACL; Schema: -; Owner: postgres
+--
+
+REVOKE ALL ON SCHEMA public FROM PUBLIC;
+REVOKE ALL ON SCHEMA public FROM postgres;
+GRANT ALL ON SCHEMA public TO postgres;
+GRANT ALL ON SCHEMA public TO PUBLIC;
+
+
+--
+-- TOC entry 1967 (class 0 OID 0)
+-- Dependencies: 161
+-- Name: inventory; Type: ACL; Schema: public; Owner: postgres
+--
+
+REVOKE ALL ON TABLE inventory FROM PUBLIC;
+REVOKE ALL ON TABLE inventory FROM postgres;
+GRANT ALL ON TABLE inventory TO postgres;
+GRANT ALL ON TABLE inventory TO usur;
+
+
+--
+-- TOC entry 1968 (class 0 OID 0)
+-- Dependencies: 162
+-- Name: list; Type: ACL; Schema: public; Owner: postgres
+--
+
+REVOKE ALL ON TABLE list FROM PUBLIC;
+REVOKE ALL ON TABLE list FROM postgres;
+GRANT ALL ON TABLE list TO postgres;
+GRANT ALL ON TABLE list TO usur;
+
+
+--
+-- TOC entry 1970 (class 0 OID 0)
+-- Dependencies: 165
+-- Name: inventory_inventory_id_seq; Type: ACL; Schema: public; Owner: postgres
+--
+
+REVOKE ALL ON SEQUENCE inventory_inventory_id_seq FROM PUBLIC;
+REVOKE ALL ON SEQUENCE inventory_inventory_id_seq FROM postgres;
+GRANT ALL ON SEQUENCE inventory_inventory_id_seq TO postgres;
+GRANT ALL ON SEQUENCE inventory_inventory_id_seq TO usur;
+
+
+--
+-- TOC entry 1972 (class 0 OID 0)
+-- Dependencies: 166
+-- Name: list_list_id_seq; Type: ACL; Schema: public; Owner: postgres
+--
+
+REVOKE ALL ON SEQUENCE list_list_id_seq FROM PUBLIC;
+REVOKE ALL ON SEQUENCE list_list_id_seq FROM postgres;
+GRANT ALL ON SEQUENCE list_list_id_seq TO postgres;
+GRANT ALL ON SEQUENCE list_list_id_seq TO usur;
+
+
+-- Completed on 2014-03-14 15:41:51 CET
+
+--
+-- PostgreSQL database dump complete
+--
+
