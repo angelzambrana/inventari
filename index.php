@@ -7,6 +7,8 @@
 <meta name="author" content="Fundacio Moli Puigvert">
 <link rel="shortcurt icon" href="img/favicon.ico">
 
+
+
 <!-- css style ivory  http://weice.in/ivory/ -->
 <link href="css/ivory.css" rel="stylesheet">
 
