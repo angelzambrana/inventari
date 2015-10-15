@@ -12,7 +12,6 @@
 
 <title>INVENTARIO</title>
 
-
 </head>
 
 <body>
