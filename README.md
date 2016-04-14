@@ -1,4 +1,4 @@
-# inventari
+# inventory
 A little inventory software.
 
 # Requeriments
